@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="game_button_size">48dp</dimen>
+    <dimen name="music_cover_size">64dp</dimen>
+    <dimen name="gaming_qs_icon_size">56dp</dimen>
+    <dimen name="gaming_qs_icon_padding">16dp</dimen>
+    <dimen name="music_info_margin_horizontal">6dp</dimen>
+    <dimen name="time_battery_margin_horizontal">6dp</dimen>
+    <dimen name="gaming_menu_padding">12dp</dimen>
+</resources>

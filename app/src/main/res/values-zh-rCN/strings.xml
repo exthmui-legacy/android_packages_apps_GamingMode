@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">游戏模式核心</string>
+
+    <string name="channel_gaming_mode_status">游戏模式状态</string>
+    <string name="action_stop_gaming_mode">停止</string>
+    <string name="gaming_mode_running">游戏模式正在运行</string>
+
+
+    <string name="gaming_mode_on">游戏模式已启动</string>
+    <string name="gaming_mode_off">已退出游戏模式</string>
+
+    <string name="gaming_mode">游戏模式</string>
+    <string name="date_format">yyyy年MM月dd日</string>
+    <string name="time_format">HH:mm</string>
+    <string name="battery_format">电量: %1$d%%</string>
+
+    <string name="performance_title">性能配置</string>
+    <string name="performance_text_for_powersave">更长续航</string>
+    <string name="performance_text_for_performance">最高性能</string>
+</resources>

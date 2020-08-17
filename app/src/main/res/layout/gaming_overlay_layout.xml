@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    android:theme="@style/AppTheme"
+    android:gravity="bottom">
+
+    <ScrollView
+        android:id="@+id/gaming_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/gamingMenuBackground">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:divider="@drawable/menu_divider"
+            android:orientation="vertical"
+            android:padding="@dimen/gaming_menu_padding"
+            android:showDividers="middle">
+
+            <org.exthmui.game.ui.TimeAndBatteryView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <!--
+            <org.exthmui.game.ui.MusicControllerView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            </org.exthmui.game.ui.MusicControllerView>
+            -->
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="4dp">
+
+                <org.exthmui.game.ui.QuickSettingsView
+                    android:id="@+id/gaming_qs"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </HorizontalScrollView>
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="4dp">
+
+                <org.exthmui.game.ui.QuickStartAppView
+                    android:id="@+id/gaming_qsapp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </HorizontalScrollView>
+
+            <org.exthmui.game.ui.GamingPerformanceView
+                android:id="@+id/performance_controller"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

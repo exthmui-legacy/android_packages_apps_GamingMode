@@ -1,0 +1,32 @@
+android_app {
+    name: "GamingMode",
+
+    resource_dirs: ["res"],
+
+    srcs: ["java/**/*.java"],
+
+    static_libs: [
+        "androidx.annotation_annotation",
+        "androidx.appcompat_appcompat",
+        "androidx.preference_preference",
+        "androidx-constraintlayout_constraintlayout",
+        "com.google.android.material_material",
+        "androidx.localbroadcastmanager_localbroadcastmanager",
+        "org.lineageos.platform.internal",
+    ],
+
+    platform_apis: true,
+    product_specific: true,
+    certificate: "platform",
+
+    required: ["privapp_whitelist_org.exthmui.game.xml"],
+
+}
+
+prebuilt_etc {
+    name: "privapp_whitelist_org.exthmui.game.xml",
+
+    src: "privapp_whitelist_org.exthmui.game.xml",
+    sub_dir: "permissions",
+
+}
