@@ -117,7 +117,7 @@ public class GamingService extends Service {
         Notification.Action.Builder actionBuilder = new Notification.Action.Builder(null, getString(R.string.action_stop_gaming_mode), stopGamingIntent);
         builder.addAction(actionBuilder.build());
         builder.setContentText(getString(R.string.gaming_mode_running));
-        builder.setSmallIcon(R.drawable.ic_launcher_foreground);
+        builder.setSmallIcon(R.drawable.ic_notification_game);
 
         mGamingNotification = builder.build();
         startForeground(NOTIFICATION_ID, mGamingNotification);
