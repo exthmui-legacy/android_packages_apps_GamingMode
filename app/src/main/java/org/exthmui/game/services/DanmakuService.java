@@ -45,7 +45,11 @@ public class DanmakuService extends NotificationListenerService {
 
     @Override
     public void onListenerDisconnected() {
-        unregisterReceiver(configReceiver);
+        try {
+            unregisterReceiver(configReceiver);
+        } catch (Exception e) {
+            // do nothing
+        }
         super.onListenerDisconnected();
     }
 

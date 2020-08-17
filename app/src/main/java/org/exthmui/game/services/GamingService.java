@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -21,6 +22,7 @@ import android.telecom.TelecomManager;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -30,6 +32,10 @@ import com.android.internal.statusbar.IStatusBarService;
 
 import org.exthmui.game.R;
 import org.exthmui.game.misc.Constants;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import lineageos.hardware.LineageHardwareManager;
 
@@ -91,6 +97,8 @@ public class GamingService extends Service {
         super.onCreate();
         createNotificationChannel(this, Constants.CHANNEL_GAMING_MODE_STATUS, getString(R.string.channel_gaming_mode_status), NotificationManager.IMPORTANCE_LOW);
 
+        checkNotificationListener();
+
         mAudioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
         mStatusBarService = IStatusBarService.Stub.asInterface(ServiceManager.getService(Context.STATUS_BAR_SERVICE));
         try {
@@ -128,6 +136,24 @@ public class GamingService extends Service {
         startServiceAsUser(mOverlayServiceIntent, UserHandle.CURRENT);
         Settings.System.putInt(getContentResolver(), Settings.System.GAMING_MODE_ACTIVE, 1);
         return super.onStartCommand(intent, flags, startId);
+    }
+
+    private void checkNotificationListener() {
+        String notificationListeners = Settings.Secure.getString(getContentResolver(), Settings.Secure.ENABLED_NOTIFICATION_LISTENERS);
+        List<String> listenersList;
+        listenersList = new ArrayList<>();
+        if (!TextUtils.isEmpty(notificationListeners)) {
+            listenersList.addAll(Arrays.asList(notificationListeners.split(":")));
+        }
+        ComponentName danmakuComponent = new ComponentName(this, DanmakuService.class);
+        if (!listenersList.contains(danmakuComponent.flattenToString())) {
+            listenersList.add(danmakuComponent.flattenToString());
+            Settings.Secure.putString(getContentResolver(), Settings.Secure.ENABLED_NOTIFICATION_LISTENERS, String.join(":", listenersList));
+        }
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        if (!notificationManager.isNotificationListenerAccessGranted(danmakuComponent)) {
+            notificationManager.setNotificationListenerAccessGranted(danmakuComponent, true);
+        }
     }
 
     private void updateConfig() {
