@@ -1,7 +1,5 @@
 package top.littlefogcat.danmakulib.danmaku;
 
-import android.util.Log;
-
 import java.util.LinkedList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;

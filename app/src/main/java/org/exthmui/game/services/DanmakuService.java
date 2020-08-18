@@ -35,6 +35,8 @@ import java.util.Map;
 
 public class DanmakuService extends NotificationListenerService {
 
+    private static final String TAG = "DanmakuService";
+
     private Map<String, String> mLastNotificationMap = new HashMap<>();
 
     private int filterThreshold = 3;

@@ -34,9 +34,6 @@ import android.os.ServiceManager;
 import android.os.SystemProperties;
 import android.os.UserHandle;
 import android.provider.Settings;
-import android.telecom.TelecomManager;
-import android.telephony.PhoneStateListener;
-import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
@@ -56,6 +53,8 @@ import java.util.List;
 import lineageos.hardware.LineageHardwareManager;
 
 public class GamingService extends Service {
+
+    private static final String TAG = "GamingService";
 
     private static final int NOTIFICATION_ID = 1;
 
@@ -120,7 +119,7 @@ public class GamingService extends Service {
         try {
             mLineageHardware = LineageHardwareManager.getInstance(this);
         } catch (Error e) {
-            e.printStackTrace();
+            Log.e(TAG, "get LineageHardwareManager failed!", e);
         }
 
         registerReceiver(mGamingModeOffReceiver, new IntentFilter(Constants.Broadcasts.SYS_BROADCAST_GAMING_MODE_OFF));
@@ -233,7 +232,7 @@ public class GamingService extends Service {
         try {
             mStatusBarService.setBlockedGesturalNavigation(disable);
         } catch (RemoteException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Failed to disable/enable gesture!", e);
         }
     }
 

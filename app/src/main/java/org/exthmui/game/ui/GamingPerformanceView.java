@@ -21,7 +21,6 @@ import android.content.Intent;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
-import android.widget.RadioGroup;
 import android.widget.SeekBar;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;

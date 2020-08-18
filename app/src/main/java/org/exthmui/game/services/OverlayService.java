@@ -43,14 +43,16 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import org.exthmui.game.R;
 import org.exthmui.game.misc.Constants;
 import org.exthmui.game.ui.GamingPerformanceView;
-import org.exthmui.game.ui.QuickStartAppView;
 import org.exthmui.game.ui.QuickSettingsView;
+import org.exthmui.game.ui.QuickStartAppView;
 
 import top.littlefogcat.danmakulib.danmaku.Danmaku;
 import top.littlefogcat.danmakulib.danmaku.DanmakuManager;
 import top.littlefogcat.danmakulib.utils.ScreenUtil;
 
 public class OverlayService extends Service {
+
+    private static final String TAG = "OverlayService";
 
     private View mGamingFloatingButton;
     private LinearLayout mGamingOverlayView;

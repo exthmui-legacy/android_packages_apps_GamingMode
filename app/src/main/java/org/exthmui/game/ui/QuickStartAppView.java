@@ -27,9 +27,9 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.os.UserHandle;
-import android.util.ArrayMap;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -44,6 +44,8 @@ import org.exthmui.game.qs.AppTile;
 import java.util.List;
 
 public class QuickStartAppView extends LinearLayout implements View.OnClickListener {
+
+    private static final String TAG = "QuickStartAppView";
 
     private Context mContext;
     private PackageManager mPackageManager;
@@ -121,7 +123,7 @@ public class QuickStartAppView extends LinearLayout implements View.OnClickListe
                 }
             }
         } catch (RemoteException e) {
-            e.printStackTrace();
+            Log.e(TAG, "", e);
         }
 
         Intent startAppIntent = mPackageManager.getLaunchIntentForPackage(packageName);

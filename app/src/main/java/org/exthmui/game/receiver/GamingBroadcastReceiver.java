@@ -20,7 +20,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.UserHandle;
-import android.util.Log;
 
 import org.exthmui.game.misc.Constants;
 import org.exthmui.game.services.GamingService;
