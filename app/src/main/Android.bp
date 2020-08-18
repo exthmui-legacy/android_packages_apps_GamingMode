@@ -17,6 +17,7 @@ android_app {
 
     platform_apis: true,
     product_specific: true,
+    privileged: true,
     certificate: "platform",
 
     required: ["privapp_whitelist_org.exthmui.game.xml"],
