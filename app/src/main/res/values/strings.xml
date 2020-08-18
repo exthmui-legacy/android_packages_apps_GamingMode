@@ -17,4 +17,11 @@
     <string name="performance_title">Performance</string>
     <string name="performance_text_for_powersave">Powersave</string>
     <string name="performance_text_for_performance">Performance</string>
+
+    <string name="qs_auto_brightness">Auto brightness</string>
+    <string name="qs_danmaku">Danmaku</string>
+    <string name="qs_dnd">Do not disturb</string>
+    <string name="qs_lock_gesture">Lock gesture</string>
+    <string name="qs_lock_hw_keys">Lock hardware keys</string>
+    <string name="qs_screen_capture">Screen capture</string>
 </resources>

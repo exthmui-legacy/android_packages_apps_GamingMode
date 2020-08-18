@@ -23,6 +23,6 @@ import org.exthmui.game.misc.Constants;
 
 public class LockHwKeysTile extends TileBase {
     public LockHwKeysTile(Context context) {
-        super(context, "屏蔽按键", Constants.GamingActionTargets.DISABLE_HW_KEYS, R.drawable.ic_qs_disable_hw_key);
+        super(context, context.getString(R.string.qs_lock_hw_keys), Constants.GamingActionTargets.DISABLE_HW_KEYS, R.drawable.ic_qs_disable_hw_key);
     }
 }

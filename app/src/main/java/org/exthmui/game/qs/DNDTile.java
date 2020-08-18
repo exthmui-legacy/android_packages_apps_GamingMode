@@ -28,6 +28,6 @@ import org.exthmui.game.misc.Constants;
 
 public class DNDTile extends TileBase {
     public DNDTile(Context context) {
-        super(context, "勿扰模式", Constants.GamingActionTargets.DISABLE_RINGTONE, R.drawable.ic_qs_dnd);
+        super(context, context.getString(R.string.qs_dnd), Constants.GamingActionTargets.DISABLE_RINGTONE, R.drawable.ic_qs_dnd);
     }
 }

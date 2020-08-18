@@ -23,7 +23,7 @@ import org.exthmui.game.misc.Constants;
 
 public class AutoBrightnessTile extends TileBase {
     public AutoBrightnessTile(Context context) {
-        super(context, "自动亮度", Constants.GamingActionTargets.DISABLE_AUTO_BRIGHTNESS, R.drawable.ic_qs_auto_brightness);
+        super(context, context.getString(R.string.qs_auto_brightness), Constants.GamingActionTargets.DISABLE_AUTO_BRIGHTNESS, R.drawable.ic_qs_auto_brightness);
         setNeedInverse(true);
     }
 }

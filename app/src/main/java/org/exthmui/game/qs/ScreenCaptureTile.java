@@ -38,7 +38,7 @@ public class ScreenCaptureTile extends TileBase {
     private Handler mHandler = new Handler();
 
     public ScreenCaptureTile(Context context) {
-        super(context, "屏幕截图", "", R.drawable.ic_qs_screenshot);
+        super(context, context.getString(R.string.qs_screen_capture), "", R.drawable.ic_qs_screenshot);
         qsIcon.setSelected(true);
     }
 

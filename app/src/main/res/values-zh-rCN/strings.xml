@@ -18,4 +18,10 @@
     <string name="performance_title">性能配置</string>
     <string name="performance_text_for_powersave">更长续航</string>
     <string name="performance_text_for_performance">最高性能</string>
+    <string name="qs_auto_brightness">自动亮度</string>
+    <string name="qs_danmaku">通知弹幕</string>
+    <string name="qs_dnd">勿扰模式</string>
+    <string name="qs_lock_gesture">屏蔽手势</string>
+    <string name="qs_lock_hw_keys">屏蔽按键</string>
+    <string name="qs_screen_capture">屏幕截图</string>
 </resources>
