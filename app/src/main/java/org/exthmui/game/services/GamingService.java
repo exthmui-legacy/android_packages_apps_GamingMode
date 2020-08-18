@@ -34,6 +34,11 @@ import android.os.ServiceManager;
 import android.os.SystemProperties;
 import android.os.UserHandle;
 import android.provider.Settings;
+import android.telecom.CallAudioState;
+import android.telecom.InCallService;
+import android.telecom.TelecomManager;
+import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
@@ -68,6 +73,10 @@ public class GamingService extends Service {
     private AudioManager mAudioManager;
     private IStatusBarService mStatusBarService;
     private LineageHardwareManager mLineageHardware;
+    private TelephonyManager mTelephonyManager;
+    private TelecomManager mTelecomManager;
+
+    private GamingPhoneStateListener mPhoneStateListener;
 
     private BroadcastReceiver mGamingModeOffReceiver = new BroadcastReceiver() {
         @Override
@@ -115,6 +124,8 @@ public class GamingService extends Service {
         checkNotificationListener();
 
         mAudioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        mTelephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+        mTelecomManager = (TelecomManager) getSystemService(TELECOM_SERVICE);
         mStatusBarService = IStatusBarService.Stub.asInterface(ServiceManager.getService(Context.STATUS_BAR_SERVICE));
         try {
             mLineageHardware = LineageHardwareManager.getInstance(this);
@@ -124,6 +135,9 @@ public class GamingService extends Service {
 
         registerReceiver(mGamingModeOffReceiver, new IntentFilter(Constants.Broadcasts.SYS_BROADCAST_GAMING_MODE_OFF));
         LocalBroadcastManager.getInstance(this).registerReceiver(mGamingActionReceiver, new IntentFilter(Constants.Broadcasts.BROADCAST_GAMING_ACTION));
+
+        mPhoneStateListener = new GamingPhoneStateListener();
+        mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
 
         mOverlayServiceIntent = new Intent(this, OverlayService.class);
 
@@ -142,7 +156,7 @@ public class GamingService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (!TextUtils.equals(intent.getStringExtra("package"), mCurrentPackage)) {
+        if (intent != null && !TextUtils.equals(intent.getStringExtra("package"), mCurrentPackage)) {
             mCurrentPackage = intent.getStringExtra("package");
             updateConfig();
         }
@@ -289,6 +303,7 @@ public class GamingService extends Service {
     public void onDestroy() {
         unregisterReceiver(mGamingModeOffReceiver);
         stopServiceAsUser(mOverlayServiceIntent, UserHandle.CURRENT);
+        mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_NONE);
         setDisableGesture(false);
         setDisableHwKeys(false, true);
         setDisableAutoBrightness(false, true);
@@ -326,6 +341,37 @@ public class GamingService extends Service {
             return val.split(";");
         } else {
             return null;
+        }
+    }
+
+    private class GamingPhoneStateListener extends PhoneStateListener {
+        private int mPrevState = -1;
+        private int mPrevMode = AudioManager.MODE_NORMAL;
+        private AudioManager mAudioManager = getSystemService(AudioManager.class);
+
+        @Override
+        public void onCallStateChanged(int state, String phoneNumber) {
+            if (Settings.System.getInt(getContentResolver(), Settings.System.GAMING_MODE_AUTO_ANSWER_CALL, 0) != 0) {
+                switch (state) {
+                    case TelephonyManager.CALL_STATE_RINGING:
+                        mTelecomManager.acceptRingingCall();
+                        break;
+                    case TelephonyManager.CALL_STATE_OFFHOOK:
+                        if (mPrevState == TelephonyManager.CALL_STATE_RINGING) {
+                            mPrevMode = mAudioManager.getMode();
+                            mAudioManager.setMode(AudioManager.MODE_IN_CALL);
+                            mAudioManager.setSpeakerphoneOn(!mAudioManager.isWiredHeadsetOn());
+                        }
+                        break;
+                    case TelephonyManager.CALL_STATE_IDLE:
+                        if (mPrevState == TelephonyManager.CALL_STATE_OFFHOOK) {
+                            mAudioManager.setMode(mPrevMode);
+                        }
+                        break;
+                }
+            }
+            mPrevState = state;
+            super.onCallStateChanged(state, phoneNumber);
         }
     }
 
