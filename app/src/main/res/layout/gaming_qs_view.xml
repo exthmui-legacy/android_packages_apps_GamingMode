@@ -8,7 +8,7 @@
 
     <ImageView
         android:id="@+id/qs_icon"
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/gaming_qs_icon_size"
         android:layout_height="@dimen/gaming_qs_icon_size"
         android:adjustViewBounds="true"
         android:background="@drawable/qs_background"
