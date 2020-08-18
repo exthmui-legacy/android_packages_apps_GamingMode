@@ -144,7 +144,6 @@ public class OverlayService extends Service {
             if (mWindowManager != null) {
                 mWindowManager.updateViewLayout(mGamingFloatingButton, mGamingFBLayoutParams);
             }
-            mQSAppView.setFloatingButtonCoordinate(mGamingFBLayoutParams.x, mGamingFBLayoutParams.y);
         }
 
         // 弹幕设置
@@ -239,9 +238,6 @@ public class OverlayService extends Service {
                                             .putInt(Constants.LocalConfigKeys.FLOATING_BUTTON_COORDINATE_HORIZONTAL_X, mGamingFBLayoutParams.x)
                                             .putInt(Constants.LocalConfigKeys.FLOATING_BUTTON_COORDINATE_HORIZONTAL_Y, mGamingFBLayoutParams.y)
                                             .apply();
-                                }
-                                if (mQSAppView != null) {
-                                    mQSAppView.setFloatingButtonCoordinate(mGamingFBLayoutParams.x, mGamingFBLayoutParams.y);
                                 }
                             }
                             isMoved = false;
