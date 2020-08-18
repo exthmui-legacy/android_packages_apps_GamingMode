@@ -247,10 +247,10 @@ public class GamingService extends Service {
 
     private void setDisableRingtone(boolean disable) {
         if (!mCurrentConfig.containsKey("old_ringer_mode")) {
-            mCurrentConfig.putInt("old_ringer_mode", mAudioManager.getRingerMode());
+            mCurrentConfig.putInt("old_ringer_mode", mAudioManager.getRingerModeInternal());
         }
         int oldRingerMode = mCurrentConfig.getInt("old_ringer_mode", AudioManager.RINGER_MODE_NORMAL);
-        mAudioManager.setRingerMode(disable ? AudioManager.RINGER_MODE_VIBRATE : oldRingerMode);
+        mAudioManager.setRingerModeInternal(disable ? AudioManager.RINGER_MODE_SILENT : oldRingerMode);
         mCurrentConfig.putBoolean(Constants.ConfigKeys.DISABLE_RINGTONE, disable);
     }
 
