@@ -122,6 +122,7 @@ public class GamingService extends Service {
         createNotificationChannel(this, Constants.CHANNEL_GAMING_MODE_STATUS, getString(R.string.channel_gaming_mode_status), NotificationManager.IMPORTANCE_LOW);
 
         checkNotificationListener();
+        checkFreeFormSettings();
 
         mAudioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
         mTelephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
@@ -183,6 +184,11 @@ public class GamingService extends Service {
         if (!notificationManager.isNotificationListenerAccessGranted(danmakuComponent)) {
             notificationManager.setNotificationListenerAccessGranted(danmakuComponent, true);
         }
+    }
+
+    private void checkFreeFormSettings() {
+        Settings.Global.putInt(getContentResolver(), Settings.Global.DEVELOPMENT_ENABLE_FREEFORM_WINDOWS_SUPPORT, 1);
+        Settings.Global.putInt(getContentResolver(), Settings.Global.DEVELOPMENT_FORCE_RESIZABLE_ACTIVITIES, 1);
     }
 
     private void updateConfig() {
