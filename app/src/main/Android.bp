@@ -26,7 +26,7 @@ android_app {
 
 prebuilt_etc {
     name: "privapp_whitelist_org.exthmui.game.xml",
-
+    product_specific: true,
     src: "privapp_whitelist_org.exthmui.game.xml",
     sub_dir: "permissions",
 
