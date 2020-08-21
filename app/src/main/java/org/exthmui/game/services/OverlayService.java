@@ -204,7 +204,6 @@ public class OverlayService extends Service {
                 private int origY;
                 private int touchX;
                 private int touchY;
-                private boolean isMoved;
 
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
@@ -219,7 +218,6 @@ public class OverlayService extends Service {
                             touchY = y;
                             break;
                         case MotionEvent.ACTION_MOVE:
-                            isMoved = true;
                             mGamingFBLayoutParams.x = origX + x - touchX;
                             mGamingFBLayoutParams.y = origY + y - touchY;
                             if (mWindowManager != null) {
@@ -227,7 +225,7 @@ public class OverlayService extends Service {
                             }
                             break;
                         case MotionEvent.ACTION_UP:
-                            if (!isMoved) {
+                            if (calcDistance(origX, origY, mGamingFBLayoutParams.x, mGamingFBLayoutParams.y) < 5) {
                                 v.performClick();
                             } else {
                                 if (ScreenUtil.isPortrait()) {
@@ -242,7 +240,6 @@ public class OverlayService extends Service {
                                             .apply();
                                 }
                             }
-                            isMoved = false;
                             break;
                         default:
                             return false;
@@ -253,6 +250,10 @@ public class OverlayService extends Service {
 
             mWindowManager.addView(mGamingFloatingButton, mGamingFBLayoutParams);
         }
+    }
+
+    private double calcDistance(int x1, int y1, int x2, int y2) {
+        return Math.sqrt((x1-x2) * (x1-x2) + (y1-y2) * (y1-y2));
     }
 
     /*
