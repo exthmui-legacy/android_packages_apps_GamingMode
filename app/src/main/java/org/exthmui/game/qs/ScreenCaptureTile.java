@@ -52,7 +52,7 @@ public class ScreenCaptureTile extends TileBase {
         LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(hideMenuIntent);
         mHandler.postDelayed(() -> {
             try {
-                WindowManagerGlobal.getWindowManagerService().takeScreenshot(1);
+                WindowManagerGlobal.getWindowManagerService().takeAlternativeScreenshot();
             } catch (RemoteException e) {
                 Log.e(TAG, "Error while trying to take screenshot.", e);
             }
