@@ -114,8 +114,8 @@ public class DanmakuService extends NotificationListenerService {
     }
 
     private boolean compareDanmaku(String a, String b) {
-        String tA = a.replaceAll("[0-9]", "");
-        String tB = b.replaceAll("[0-9]", "");
+        String tA = a.replaceAll("[\\d]+\\.[\\d]+|[\\d]", "");
+        String tB = b.replaceAll("[\\d]+\\.[\\d]+|[\\d]", "");
         if (TextUtils.isEmpty(tA) || TextUtils.isEmpty(tB)) {
             return levenshtein(a, b) > filterThreshold;
         } else {
