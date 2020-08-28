@@ -26,7 +26,9 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.AudioDeviceInfo;
 import android.media.AudioManager;
+import android.media.AudioSystem;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
@@ -355,6 +357,17 @@ public class GamingService extends Service {
         private int mPrevMode = AudioManager.MODE_NORMAL;
         private AudioManager mAudioManager = getSystemService(AudioManager.class);
 
+        private boolean isHeadsetPluggedIn() {
+            AudioDeviceInfo[] audioDeviceInfoArr = mAudioManager.getDevices(AudioManager.GET_DEVICES_ALL);
+            for (AudioDeviceInfo info : audioDeviceInfoArr) {
+                if (info.getType() == AudioDeviceInfo.TYPE_WIRED_HEADPHONES || info.getType() == AudioDeviceInfo.TYPE_WIRED_HEADSET ||
+                    info.getType() == AudioDeviceInfo.TYPE_USB_HEADSET) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         @Override
         public void onCallStateChanged(int state, String phoneNumber) {
             if (Settings.System.getInt(getContentResolver(), Settings.System.GAMING_MODE_AUTO_ANSWER_CALL, 0) != 0) {
@@ -365,13 +378,22 @@ public class GamingService extends Service {
                     case TelephonyManager.CALL_STATE_OFFHOOK:
                         if (mPrevState == TelephonyManager.CALL_STATE_RINGING) {
                             mPrevMode = mAudioManager.getMode();
-                            mAudioManager.setMode(AudioManager.MODE_IN_CALL);
-                            mAudioManager.setSpeakerphoneOn(!mAudioManager.isWiredHeadsetOn());
+                            mAudioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
+                            if (isHeadsetPluggedIn()) {
+                                mAudioManager.setSpeakerphoneOn(false);
+                                AudioSystem.setForceUse(AudioSystem.FOR_COMMUNICATION, AudioSystem.FORCE_NONE);
+                            } else {
+                                mAudioManager.setSpeakerphoneOn(true);
+                                AudioSystem.setForceUse(AudioSystem.FOR_COMMUNICATION, AudioSystem.FORCE_SPEAKER);
+                            }
+                            mAudioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
                         }
                         break;
                     case TelephonyManager.CALL_STATE_IDLE:
                         if (mPrevState == TelephonyManager.CALL_STATE_OFFHOOK) {
                             mAudioManager.setMode(mPrevMode);
+                            AudioSystem.setForceUse(AudioSystem.FOR_COMMUNICATION, AudioSystem.FORCE_NONE);
+                            mAudioManager.setSpeakerphoneOn(false);
                         }
                         break;
                 }
