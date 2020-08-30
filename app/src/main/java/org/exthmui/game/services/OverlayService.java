@@ -27,6 +27,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -35,6 +36,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
@@ -54,7 +56,9 @@ public class OverlayService extends Service {
 
     private static final String TAG = "OverlayService";
 
-    private View mGamingFloatingButton;
+    private View mGamingFloatingLayout;
+    private ImageView mGamingFloatingButton;
+    private ImageView mCallControlButton;
     private LinearLayout mGamingOverlayView;
     private ScrollView mGamingMenu;
     private FrameLayout mDanmakuContainer;
@@ -70,11 +74,34 @@ public class OverlayService extends Service {
 
     private Bundle configBundle;
 
+    private int mCallStatus = TelephonyManager.CALL_STATE_IDLE;
+
     private OMReceiver mOMReceiver = new OMReceiver();
     private BroadcastReceiver mSysConfigChangedReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (Intent.ACTION_CONFIGURATION_CHANGED.equals(intent.getAction())) updateConfig();
+        }
+    };
+
+    private BroadcastReceiver mCallStatusReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (mCallControlButton == null) return;
+            switch (intent.getIntExtra("state", TelephonyManager.CALL_STATE_IDLE)) {
+                case TelephonyManager.CALL_STATE_RINGING:
+                    mCallControlButton.setImageResource(R.drawable.ic_call_accept);
+                    mCallControlButton.setVisibility(View.VISIBLE);
+                    break;
+                case TelephonyManager.CALL_STATE_IDLE:
+                    mCallControlButton.setVisibility(View.GONE);
+                    break;
+                case TelephonyManager.CALL_STATE_OFFHOOK:
+                    mCallControlButton.setImageResource(R.drawable.ic_call_end);
+                    mCallControlButton.setVisibility(View.VISIBLE);
+                    break;
+            }
+            mCallStatus = intent.getIntExtra("state", TelephonyManager.CALL_STATE_IDLE);
         }
     };
 
@@ -103,6 +130,8 @@ public class OverlayService extends Service {
         intentFilter.addAction(Constants.Broadcasts.BROADCAST_GAMING_MENU_CONTROL);
         LocalBroadcastManager.getInstance(this).registerReceiver(mOMReceiver, intentFilter);
 
+        LocalBroadcastManager.getInstance(this).registerReceiver(mCallStatusReceiver, new IntentFilter(Constants.Broadcasts.BROADCAST_CALL_STATUS));
+
         registerReceiver(mSysConfigChangedReceiver, new IntentFilter(Intent.ACTION_CONFIGURATION_CHANGED));
 
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -118,7 +147,7 @@ public class OverlayService extends Service {
     private void initView() {
         mWindowManager = (WindowManager) getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
         initGamingMenu();
-        initFloatingButton();
+        initFloatingLayout();
         initDanmaku();
     }
 
@@ -134,7 +163,7 @@ public class OverlayService extends Service {
         }
 
         // 悬浮球位置调整
-        if (mGamingFloatingButton != null && mGamingFBLayoutParams != null) {
+        if (mGamingFloatingLayout != null && mGamingFBLayoutParams != null) {
             int defaultX = ((int) getResources().getDimension(R.dimen.game_button_size) - ScreenUtil.getScreenWidth()) / 2;
             if (ScreenUtil.isPortrait()) {
                 mGamingFBLayoutParams.x = mPreferences.getInt(Constants.LocalConfigKeys.FLOATING_BUTTON_COORDINATE_VERTICAL_X, defaultX);
@@ -144,7 +173,7 @@ public class OverlayService extends Service {
                 mGamingFBLayoutParams.y = mPreferences.getInt(Constants.LocalConfigKeys.FLOATING_BUTTON_COORDINATE_HORIZONTAL_Y, 10);
             }
             if (mWindowManager != null) {
-                mWindowManager.updateViewLayout(mGamingFloatingButton, mGamingFBLayoutParams);
+                mWindowManager.updateViewLayout(mGamingFloatingLayout, mGamingFBLayoutParams);
             }
         }
 
@@ -190,16 +219,15 @@ public class OverlayService extends Service {
         }
     }
 
-    private void initFloatingButton() {
-        if (mGamingFloatingButton == null && mWindowManager != null) {
-            mGamingFloatingButton = LayoutInflater.from(this).inflate(R.layout.gaming_button_layout, null);
+    private void initFloatingLayout() {
+        if (mGamingFloatingLayout == null && mWindowManager != null) {
+            mGamingFloatingLayout = LayoutInflater.from(this).inflate(R.layout.gaming_button_layout, null);
 
             mGamingFBLayoutParams = getBaseLayoutParams();
             mGamingFBLayoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
             mGamingFBLayoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
 
-            mGamingFloatingButton.setOnClickListener(v -> showHideGamingMenu(0));
-            mGamingFloatingButton.setOnTouchListener(new View.OnTouchListener() {
+            mGamingFloatingLayout.setOnTouchListener(new View.OnTouchListener() {
                 private int origX;
                 private int origY;
                 private int touchX;
@@ -221,7 +249,7 @@ public class OverlayService extends Service {
                             mGamingFBLayoutParams.x = origX + x - touchX;
                             mGamingFBLayoutParams.y = origY + y - touchY;
                             if (mWindowManager != null) {
-                                mWindowManager.updateViewLayout(mGamingFloatingButton, mGamingFBLayoutParams);
+                                mWindowManager.updateViewLayout(mGamingFloatingLayout, mGamingFBLayoutParams);
                             }
                             break;
                         case MotionEvent.ACTION_UP:
@@ -248,7 +276,17 @@ public class OverlayService extends Service {
                 }
             });
 
-            mWindowManager.addView(mGamingFloatingButton, mGamingFBLayoutParams);
+            mWindowManager.addView(mGamingFloatingLayout, mGamingFBLayoutParams);
+        }
+
+        if (mGamingFloatingButton == null) {
+            mGamingFloatingButton = mGamingFloatingLayout.findViewById(R.id.floating_button);
+            mGamingFloatingButton.setOnClickListener(v -> showHideGamingMenu(0));
+        }
+
+        if (mCallControlButton == null) {
+            mCallControlButton = mGamingFloatingLayout.findViewById(R.id.call_control_button);
+            mCallControlButton.setOnClickListener(v -> callControl());
         }
     }
 
@@ -263,7 +301,7 @@ public class OverlayService extends Service {
         if (mGamingOverlayView.getVisibility() == View.VISIBLE && mode != 1) {
             // hide
             mGamingOverlayView.setVisibility(View.GONE);
-            mGamingFloatingButton.setVisibility(View.VISIBLE);
+            mGamingFloatingLayout.setVisibility(View.VISIBLE);
         } else if (mode != 2) {
             // show
             int gravity = 0;
@@ -278,7 +316,7 @@ public class OverlayService extends Service {
                 gravity |= Gravity.TOP;
             }
 
-            mGamingFloatingButton.setVisibility(View.GONE);
+            mGamingFloatingLayout.setVisibility(View.GONE);
             mGamingOverlayView.setGravity(gravity);
             ViewGroup.LayoutParams gamingMenuLayoutParams =  mGamingMenu.getLayoutParams();
             if (ScreenUtil.isPortrait()) {
@@ -318,13 +356,20 @@ public class OverlayService extends Service {
     @Override
     public void onDestroy() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mOMReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mCallStatusReceiver);
         unregisterReceiver(mSysConfigChangedReceiver);
         if (mWindowManager != null) {
-            if (mGamingFloatingButton != null) mWindowManager.removeViewImmediate(mGamingFloatingButton);
+            if (mGamingFloatingLayout != null) mWindowManager.removeViewImmediate(mGamingFloatingLayout);
             if (mDanmakuContainer != null) mWindowManager.removeViewImmediate(mDanmakuContainer);
             if (mGamingOverlayView != null) mWindowManager.removeViewImmediate(mGamingOverlayView);
         }
         super.onDestroy();
+    }
+
+    private void callControl() {
+        Intent intent = new Intent(Constants.Broadcasts.BROADCAST_CALL_CONTROL);
+        intent.putExtra("cmd", mCallStatus == TelephonyManager.CALL_STATE_OFFHOOK ? 1 : 2);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
     private class OMReceiver extends BroadcastReceiver {

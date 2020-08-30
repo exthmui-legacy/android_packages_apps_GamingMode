@@ -68,6 +68,8 @@ public class GamingService extends Service {
     private Intent mOverlayServiceIntent;
     private Notification mGamingNotification;
 
+    private Intent mCallStatusIntent;
+
     private String mCurrentPackage;
 
     private Bundle mCurrentConfig = new Bundle();
@@ -85,6 +87,18 @@ public class GamingService extends Service {
         public void onReceive(Context context, Intent intent) {
             if (Constants.Broadcasts.SYS_BROADCAST_GAMING_MODE_OFF.equals(intent.getAction())) {
                 stopSelf();
+            }
+        }
+    };
+
+    private BroadcastReceiver mCallControlReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (mTelecomManager == null) return;
+            if (intent.getIntExtra("cmd", 1) == 1) {
+                mTelecomManager.endCall();
+            } else {
+                mTelecomManager.acceptRingingCall();
             }
         }
     };
@@ -137,10 +151,13 @@ public class GamingService extends Service {
         }
 
         registerReceiver(mGamingModeOffReceiver, new IntentFilter(Constants.Broadcasts.SYS_BROADCAST_GAMING_MODE_OFF));
+        LocalBroadcastManager.getInstance(this).registerReceiver(mCallControlReceiver, new IntentFilter(Constants.Broadcasts.BROADCAST_CALL_CONTROL));
         LocalBroadcastManager.getInstance(this).registerReceiver(mGamingActionReceiver, new IntentFilter(Constants.Broadcasts.BROADCAST_GAMING_ACTION));
 
         mPhoneStateListener = new GamingPhoneStateListener();
         mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+
+        mCallStatusIntent = new Intent(Constants.Broadcasts.BROADCAST_CALL_STATUS);
 
         mOverlayServiceIntent = new Intent(this, OverlayService.class);
 
@@ -167,6 +184,10 @@ public class GamingService extends Service {
         mOverlayServiceIntent.putExtras(mCurrentConfig);
         startServiceAsUser(mOverlayServiceIntent, UserHandle.CURRENT);
         Settings.System.putInt(getContentResolver(), Settings.System.GAMING_MODE_ACTIVE, 1);
+        if (mTelephonyManager != null) {
+            mCallStatusIntent.putExtra("state", mTelephonyManager.getCallState());
+            LocalBroadcastManager.getInstance(this).sendBroadcast(mCallStatusIntent);
+        }
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -310,6 +331,7 @@ public class GamingService extends Service {
     @Override
     public void onDestroy() {
         unregisterReceiver(mGamingModeOffReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mCallControlReceiver);
         stopServiceAsUser(mOverlayServiceIntent, UserHandle.CURRENT);
         mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_NONE);
         setDisableGesture(false);
@@ -398,6 +420,8 @@ public class GamingService extends Service {
                         break;
                 }
             }
+            mCallStatusIntent.putExtra("state", state);
+            LocalBroadcastManager.getInstance(GamingService.this).sendBroadcast(mCallStatusIntent);
             mPrevState = state;
             super.onCallStateChanged(state, phoneNumber);
         }

@@ -38,6 +38,11 @@ public class Constants {
         */
         public static final String BROADCAST_GAMING_ACTION = "org.exthmui.game.GAMING_ACTION";
         public static final String BROADCAST_GAMING_MENU_CONTROL = "org.exthmui.game.GAMING_MENU_CONTROL";
+
+        /* 来电状态与控制 */
+        public static final String BROADCAST_CALL_STATUS = "org.exthmui.game.CALL_STATUS";
+        // cmd: 1=挂断 2=接听
+        public static final String BROADCAST_CALL_CONTROL = "org.exthmui.game.CALL_CONTROL";
     }
 
     public static class ConfigKeys {

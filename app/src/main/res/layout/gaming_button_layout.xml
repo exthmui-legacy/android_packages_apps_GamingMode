@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content" android:layout_height="wrap_content"
-    android:background="@android:color/transparent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent"
+    android:padding="6dp">
+
     <ImageView
         android:id="@+id/floating_button"
         android:layout_width="@dimen/game_button_size"
@@ -9,4 +12,17 @@
         android:contentDescription="@null"
         android:scaleType="fitCenter"
         android:src="@drawable/ic_game_button" />
-</FrameLayout>
+
+    <Space
+        android:layout_width="6dp"
+        android:layout_height="wrap_content" />
+
+    <ImageView
+        android:id="@+id/call_control_button"
+        android:layout_width="@dimen/game_button_size"
+        android:layout_height="@dimen/game_button_size"
+        android:contentDescription="@null"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_call_end"
+        android:visibility="gone" />
+</LinearLayout>
