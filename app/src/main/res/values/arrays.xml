@@ -2,5 +2,16 @@
 <resources>
     <string-array name="game_package_regex">
         <item>klb\.android\..*</item>
+        <item>com\.tencent\.tmgp\..*</item>
+        <item>com\.seasun\.cloudgame\.jx3</item>
+        <item>com\.netease\.zjz</item>
+        <item>com\.tencent\.cldts</item>
+        <item>com\.netease\.hyxd</item>
+        <item>com\.yingxiong\.hero</item>
+        <item>com\.wali\.xmcs</item>
+        <item>com\.tq\.he</item>
+        <item>com\.yinhan\.skzh</item>
+        <item>com\.jumpw\.mobile</item>
+        <item>com\.netease\.moba</item>
     </string-array>
 </resources>
