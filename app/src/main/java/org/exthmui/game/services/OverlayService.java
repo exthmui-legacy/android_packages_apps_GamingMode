@@ -227,7 +227,13 @@ public class OverlayService extends Service {
             mGamingFBLayoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
             mGamingFBLayoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
 
-            mGamingFloatingLayout.setOnTouchListener(new View.OnTouchListener() {
+            mWindowManager.addView(mGamingFloatingLayout, mGamingFBLayoutParams);
+        }
+
+        if (mGamingFloatingButton == null) {
+            mGamingFloatingButton = mGamingFloatingLayout.findViewById(R.id.floating_button);
+            mGamingFloatingButton.setOnClickListener(v -> showHideGamingMenu(0));
+            mGamingFloatingButton.setOnTouchListener(new View.OnTouchListener() {
                 private int origX;
                 private int origY;
                 private int touchX;
@@ -276,12 +282,6 @@ public class OverlayService extends Service {
                 }
             });
 
-            mWindowManager.addView(mGamingFloatingLayout, mGamingFBLayoutParams);
-        }
-
-        if (mGamingFloatingButton == null) {
-            mGamingFloatingButton = mGamingFloatingLayout.findViewById(R.id.floating_button);
-            mGamingFloatingButton.setOnClickListener(v -> showHideGamingMenu(0));
         }
 
         if (mCallControlButton == null) {
