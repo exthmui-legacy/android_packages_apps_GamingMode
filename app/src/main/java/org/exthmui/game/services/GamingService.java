@@ -23,14 +23,19 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.ContentObserver;
 import android.media.AudioDeviceInfo;
 import android.media.AudioManager;
 import android.media.AudioSystem;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.RemoteException;
 import android.os.ServiceManager;
 import android.os.SystemProperties;
@@ -81,6 +86,8 @@ public class GamingService extends Service {
     private TelecomManager mTelecomManager;
 
     private GamingPhoneStateListener mPhoneStateListener;
+    
+    private GamingModeStatusObserver mGamingModeStatusObserver;
 
     private BroadcastReceiver mGamingModeOffReceiver = new BroadcastReceiver() {
         @Override
@@ -128,7 +135,6 @@ public class GamingService extends Service {
         }
     };
 
-
     public GamingService() {
     }
 
@@ -153,6 +159,7 @@ public class GamingService extends Service {
         registerReceiver(mGamingModeOffReceiver, new IntentFilter(Constants.Broadcasts.SYS_BROADCAST_GAMING_MODE_OFF));
         LocalBroadcastManager.getInstance(this).registerReceiver(mCallControlReceiver, new IntentFilter(Constants.Broadcasts.BROADCAST_CALL_CONTROL));
         LocalBroadcastManager.getInstance(this).registerReceiver(mGamingActionReceiver, new IntentFilter(Constants.Broadcasts.BROADCAST_GAMING_ACTION));
+        mGamingModeStatusObserver = new GamingModeStatusObserver(this, new Handler(Looper.getMainLooper()));
 
         mPhoneStateListener = new GamingPhoneStateListener();
         mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
@@ -427,4 +434,30 @@ public class GamingService extends Service {
         }
     }
 
+    private static class GamingModeStatusObserver extends ContentObserver {
+
+        private static Uri mUriForIsGaming = Settings.System.getUriFor(Settings.System.GAMING_MODE_ACTIVE);
+
+        private Service mService;
+        private ContentResolver mResolver;
+
+        public GamingModeStatusObserver(Service service, Handler handler) {
+            super(handler);
+            mService = service;
+            mResolver = service.getContentResolver();
+            mResolver.registerContentObserver(mUriForIsGaming, false, this);
+
+        }
+
+        @Override
+        public void onChange(boolean selfChange, Uri uri) {
+            super.onChange(selfChange, uri);
+            if (mUriForIsGaming.equals(uri)) {
+                if (Settings.System.getInt(mResolver, Settings.System.GAMING_MODE_ACTIVE, 0) == 0) {
+                    mResolver.unregisterContentObserver(this);
+                    mService.stopSelf();
+                }
+            }
+        }
+    }
 }
