@@ -101,16 +101,16 @@ public class QuickStartAppView extends LinearLayout implements View.OnClickListe
         int width, height;
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             // 竖屏
-            width = m.widthPixels - 200;
+            width = m.widthPixels - 100;
             height = width * 4 / 3;
         } else {
             // 横屏
-            height = m.heightPixels - 200;
-            width = height * 4 / 3;
+            height = m.heightPixels - 100;
+            width = height * 3 / 4;
         }
-        int left = 100;
+        int left = 50;
         int right = left + width;
-        int top = 100;
+        int top = 50;
         int bottom = top + height;
         mActivityOptions.setLaunchBounds(new Rect(left, top, right, bottom));
 
