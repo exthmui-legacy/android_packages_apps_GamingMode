@@ -95,4 +95,8 @@ public class TileBase extends LinearLayout implements View.OnClickListener {
         intent.putExtra("value", !isSelected);
         LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
     }
+
+    public void onDestroy() {
+        
+    }
 }
