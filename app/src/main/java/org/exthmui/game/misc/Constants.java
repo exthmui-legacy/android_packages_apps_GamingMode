@@ -131,5 +131,13 @@ public class Constants {
         public static final String FLOATING_BUTTON_COORDINATE_HORIZONTAL_Y = "floating_button_horizontal_y";
         public static final String FLOATING_BUTTON_COORDINATE_VERTICAL_X = "floating_button_vertical_x";
         public static final String FLOATING_BUTTON_COORDINATE_VERTICAL_Y = "floating_button_vertical_y";
+        // 屏幕录制选项
+        public static final String SCREEN_RECORDING_AUDIO_SOURCE = "screen_recording_audio_source";
+        public static final String SCREEN_RECORDING_SHOW_TAP = "screen_recording_show_tap";
+    }
+
+    public static class LocalConfigDefaultValues {
+        public static final int SCREEN_RECORDING_AUDIO_SOURCE = 3;
+        public static final boolean SCREEN_RECORDING_SHOW_TAP = false;
     }
 }

@@ -24,4 +24,11 @@
     <string name="qs_lock_gesture">屏蔽手势</string>
     <string name="qs_lock_hw_keys">屏蔽按键</string>
     <string name="qs_screen_capture">屏幕截图</string>
+    <string name="qs_screen_record">录制屏幕</string>
+    <string name="screenrecord_device_audio_label">"设备音频"</string>
+    <string name="screenrecord_audio_label">"录制音频"</string>
+    <string name="screenrecord_taps_label">"显示触屏位置"</string>
+    <string name="screenrecord_device_audio_description">"设备发出的声音，例如音乐、通话和铃声"</string>
+    <string name="screenrecord_mic_label">"麦克风"</string>
+    <string name="screenrecord_device_audio_and_mic_label">"设备音频和麦克风"</string>
 </resources>

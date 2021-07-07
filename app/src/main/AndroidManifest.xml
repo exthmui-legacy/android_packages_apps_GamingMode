@@ -11,6 +11,7 @@
     <uses-permission android:name="android.permission.MODIFY_PHONE_STATE" />
     <uses-permission android:name="android.permission.ANSWER_PHONE_CALLS" />
     <uses-permission android:name="android.permission.PROCESS_INCOMING_CALLS" />
+    <uses-permission android:name="com.android.systemui.permission.SCREEN_RECORDING" />
 
     <application
         android:allowBackup="true"
@@ -19,6 +20,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity
+            android:name=".ui.ScreenRecordConfDialogActivity"
+            android:theme="@style/dialog" />
+
         <receiver
             android:name=".receiver.GamingBroadcastReceiver"
             android:enabled="true">

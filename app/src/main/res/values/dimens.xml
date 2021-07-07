@@ -7,4 +7,6 @@
     <dimen name="music_info_margin_horizontal">6dp</dimen>
     <dimen name="time_battery_margin_horizontal">6dp</dimen>
     <dimen name="gaming_menu_padding">12dp</dimen>
+    <dimen name="screenrecord_dialog_padding">18dp</dimen>
+    <dimen name="screenrecord_logo_size">24dp</dimen>
 </resources>

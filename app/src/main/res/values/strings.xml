@@ -24,4 +24,15 @@
     <string name="qs_lock_gesture">Lock gesture</string>
     <string name="qs_lock_hw_keys">Lock hardware keys</string>
     <string name="qs_screen_capture">Screen capture</string>
+    <string name="qs_screen_record">Screen record</string>
+    <string name="screenrecord_audio_label">Record audio</string>
+    <string name="screenrecord_taps_label">Show touches on screen</string>
+    <!-- Label for the option to record audio from the device [CHAR LIMIT=NONE]-->
+    <string name="screenrecord_device_audio_label">Device audio</string>
+    <!-- Description of what audio may be captured from the device [CHAR LIMIT=NONE]-->
+    <string name="screenrecord_device_audio_description">Sound from your device, like music, calls, and ringtones</string>
+    <!-- Label for the option to enable microphone input during screen recording [CHAR LIMIT=NONE]-->
+    <string name="screenrecord_mic_label">Microphone</string>
+    <!-- Label for an option to record audio from both device and microphone [CHAR LIMIT=NONE]-->
+    <string name="screenrecord_device_audio_and_mic_label">Device audio and microphone</string>
 </resources>
