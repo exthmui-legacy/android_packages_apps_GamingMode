@@ -253,6 +253,9 @@ public class GamingService extends Service {
         boolean disableAutoBrightness = getBooleanSetting(Constants.ConfigKeys.DISABLE_AUTO_BRIGHTNESS, Constants.ConfigDefaultValues.DISABLE_AUTO_BRIGHTNESS);
         setDisableAutoBrightness(disableAutoBrightness, false);
 
+        // menu opacity
+        mCurrentConfig.putInt(Constants.ConfigKeys.MENU_OPACITY, getIntSetting(Constants.ConfigKeys.MENU_OPACITY, Constants.ConfigDefaultValues.MENU_OPACITY));
+
         Intent intent = new Intent(Constants.Broadcasts.BROADCAST_CONFIG_CHANGED);
         intent.putExtras(mCurrentConfig);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);

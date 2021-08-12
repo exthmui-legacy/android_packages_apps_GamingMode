@@ -78,6 +78,8 @@ public class Constants {
 
         // 快速启动app
         public static final String QUICK_START_APPS = Settings.System.GAMING_MODE_QS_APP_LIST;
+
+        public static final String MENU_OPACITY = Settings.System.GAMING_MODE_MENU_OPACITY;
     }
 
     public static class ConfigDefaultValues {
@@ -108,6 +110,9 @@ public class Constants {
         // 性能配置
         public static final boolean CHANGE_PERFORMANCE_LEVEL = true;
         public static final int PERFORMANCE_LEVEL = 5;
+
+        // Opacity of Gaming Menu (in percent)
+        public static final int MENU_OPACITY = 75;
     }
 
     public static class GamingActionTargets {

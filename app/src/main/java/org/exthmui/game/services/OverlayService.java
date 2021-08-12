@@ -192,6 +192,11 @@ public class OverlayService extends Service {
         if (performanceController != null) {
             performanceController.setLevel(configBundle.getInt(Constants.ConfigKeys.PERFORMANCE_LEVEL, Constants.ConfigDefaultValues.PERFORMANCE_LEVEL));
         }
+
+        if (mGamingMenu != null) {
+            final int menuOpacity = configBundle.getInt(Constants.ConfigKeys.MENU_OPACITY, Constants.ConfigDefaultValues.MENU_OPACITY);
+            mGamingMenu.getBackground().setAlpha(menuOpacity * 255 / 100);
+        }
     }
 
     private WindowManager.LayoutParams getBaseLayoutParams() {
@@ -216,6 +221,7 @@ public class OverlayService extends Service {
 
             performanceController = mGamingOverlayView.findViewById(R.id.performance_controller);
             mGamingOverlayView.setOnClickListener(v -> showHideGamingMenu(0));
+            mGamingMenu.getBackground().setAlpha(Constants.ConfigDefaultValues.MENU_OPACITY * 255 / 100);
         }
     }
 
