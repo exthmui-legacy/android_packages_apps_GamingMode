@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/performance_title"
-        android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
 
     <SeekBar
         android:id="@+id/performance_seek"
@@ -14,26 +10,30 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:max="6"
-        android:progress="3" />
+        android:progress="3"
+        android:tickMark="@null" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp">
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="left"
-            android:text="@string/performance_text_for_powersave" />
+            android:gravity="start"
+            android:text="@string/performance_text_for_powersave"
+            android:textSize="@dimen/perf_indicator_text_size" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="right"
-            android:text="@string/performance_text_for_performance" />
+            android:gravity="end"
+            android:text="@string/performance_text_for_performance"
+            android:textSize="@dimen/perf_indicator_text_size" />
 
     </LinearLayout>
 

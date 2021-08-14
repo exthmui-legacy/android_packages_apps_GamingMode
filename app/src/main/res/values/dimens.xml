@@ -9,4 +9,5 @@
     <dimen name="gaming_menu_padding">12dp</dimen>
     <dimen name="screenrecord_dialog_padding">18dp</dimen>
     <dimen name="screenrecord_logo_size">24dp</dimen>
+    <dimen name="perf_indicator_text_size">12sp</dimen>
 </resources>
