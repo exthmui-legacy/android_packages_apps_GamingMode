@@ -4,6 +4,7 @@
     <dimen name="music_cover_size">64dp</dimen>
     <dimen name="gaming_qs_icon_size">56dp</dimen>
     <dimen name="gaming_qs_icon_padding">16dp</dimen>
+    <dimen name="gaming_qs_text_size">12sp</dimen>
     <dimen name="music_info_margin_horizontal">6dp</dimen>
     <dimen name="time_battery_margin_horizontal">6dp</dimen>
     <dimen name="gaming_menu_padding">12dp</dimen>

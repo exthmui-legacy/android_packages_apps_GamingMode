@@ -21,5 +21,6 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:maxEms="4"
-        android:maxLines="2" />
+        android:maxLines="2"
+        android:textSize="@dimen/gaming_qs_text_size" />
 </LinearLayout>
