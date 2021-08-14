@@ -35,25 +35,27 @@
             -->
 
             <HorizontalScrollView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:padding="4dp">
 
                 <org.exthmui.game.ui.QuickSettingsView
                     android:id="@+id/gaming_qs"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
             </HorizontalScrollView>
 
             <HorizontalScrollView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:padding="4dp">
 
                 <org.exthmui.game.ui.QuickStartAppView
                     android:id="@+id/gaming_qsapp"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
             </HorizontalScrollView>
 
             <org.exthmui.game.ui.GamingPerformanceView
