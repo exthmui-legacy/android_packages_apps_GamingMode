@@ -3,6 +3,7 @@
     <color name="colorPrimary">#6200EE</color>
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#03DAC5</color>
-    <color name="gamingMenuBackground">#000000</color>
+    <color name="qs_background_color_active">@*android:color/accent_device_default_light</color>
+    <color name="qs_background_color_inactive">#66000000</color>
     <color name="GM2_grey_700">#5F6368</color>
 </resources>
