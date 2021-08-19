@@ -56,6 +56,12 @@ public class OverlayService extends Service {
 
     private static final String TAG = "OverlayService";
 
+    /** Default delay for the floating button  to be hidden (in ms) */
+    private static final int FLOATING_BUTTON_HIDE_DELAY = 1000;
+
+    /** Default alpha value for hiding the floating button hidden */
+    private static final float FLOATING_BUTTON_HIDE_ALPHA = 0.1f;
+
     private View mGamingFloatingLayout;
     private ImageView mGamingFloatingButton;
     private ImageView mCallControlButton;
@@ -258,6 +264,7 @@ public class OverlayService extends Service {
                             touchY = y;
                             break;
                         case MotionEvent.ACTION_MOVE:
+                            hideFloatingButton(false);
                             mGamingFBLayoutParams.x = origX + x - touchX;
                             mGamingFBLayoutParams.y = origY + y - touchY;
                             if (mWindowManager != null) {
@@ -265,6 +272,7 @@ public class OverlayService extends Service {
                             }
                             break;
                         case MotionEvent.ACTION_UP:
+                            hideFloatingButton(true);
                             if (calcDistance(origX, origY, mGamingFBLayoutParams.x, mGamingFBLayoutParams.y) < 5) {
                                 v.performClick();
                             } else {
@@ -287,7 +295,7 @@ public class OverlayService extends Service {
                     return true;
                 }
             });
-
+            hideFloatingButton(true, true);
         }
 
         if (mCallControlButton == null) {
@@ -311,6 +319,7 @@ public class OverlayService extends Service {
             // hide
             mGamingOverlayView.setVisibility(View.GONE);
             mGamingFloatingLayout.setVisibility(View.VISIBLE);
+            hideFloatingButton(true);
         } else if (mode != 2) {
             // show
             int gravity = 0;
@@ -370,6 +379,26 @@ public class OverlayService extends Service {
             if (mGamingOverlayView != null) mWindowManager.removeViewImmediate(mGamingOverlayView);
         }
         super.onDestroy();
+    }
+
+
+    private void hideFloatingButton(boolean hide, boolean init) {
+        if (mGamingFloatingButton == null) return;
+
+        float current = mGamingFloatingButton.getAlpha();
+        int delayedHide = init ? FLOATING_BUTTON_HIDE_DELAY * 2 : FLOATING_BUTTON_HIDE_DELAY;
+        if (hide && current == 1f) {
+            mGamingFloatingButton.animate()
+                    .alpha(FLOATING_BUTTON_HIDE_ALPHA)
+                    .setStartDelay(delayedHide)
+                    .setDuration(250);
+        } else {
+            mGamingFloatingButton.setAlpha(1f);
+        }
+    }
+
+    private void hideFloatingButton(boolean hide) {
+        hideFloatingButton(hide, false);
     }
 
     private void callControl() {
