@@ -199,6 +199,12 @@ public class OverlayService extends Service {
             performanceController.setLevel(configBundle.getInt(Constants.ConfigKeys.PERFORMANCE_LEVEL, Constants.ConfigDefaultValues.PERFORMANCE_LEVEL));
         }
 
+        // Danmaku Container visibility
+        if (mDanmakuContainer != null) {
+            final boolean showDanmaku = configBundle.getBoolean(Constants.ConfigKeys.SHOW_DANMAKU, Constants.ConfigDefaultValues.SHOW_DANMAKU);
+            mDanmakuContainer.setVisibility(showDanmaku ? View.VISIBLE : View.GONE);
+        }
+
         if (mGamingMenu != null) {
             final int menuOpacity = configBundle.getInt(Constants.ConfigKeys.MENU_OPACITY, Constants.ConfigDefaultValues.MENU_OPACITY);
             mGamingMenu.getBackground().setAlpha(menuOpacity * 255 / 100);
