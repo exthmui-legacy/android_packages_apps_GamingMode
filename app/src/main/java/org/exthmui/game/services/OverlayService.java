@@ -29,6 +29,8 @@ import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
+import android.view.DisplayCutout;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -40,6 +42,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
+import androidx.core.math.MathUtils;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import org.exthmui.game.R;
@@ -80,7 +83,15 @@ public class OverlayService extends Service {
 
     private Bundle configBundle;
 
+    private final DisplayMetrics mDisplayMetric = new DisplayMetrics();
     private int mCallStatus = TelephonyManager.CALL_STATE_IDLE;
+    private float mFloatingButtonSize;
+    private int mDeviceCutoutSize;
+
+    private enum CoordinateType {
+        X,
+        Y
+    }
 
     private OMReceiver mOMReceiver = new OMReceiver();
     private BroadcastReceiver mSysConfigChangedReceiver = new BroadcastReceiver() {
@@ -125,22 +136,17 @@ public class OverlayService extends Service {
     public void onCreate() {
         super.onCreate();
         configBundle = new Bundle();
-
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         if (Settings.canDrawOverlays(this)) {
             initView();
         }
-
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(Constants.Broadcasts.BROADCAST_NEW_DANMAKU);
         intentFilter.addAction(Constants.Broadcasts.BROADCAST_CONFIG_CHANGED);
         intentFilter.addAction(Constants.Broadcasts.BROADCAST_GAMING_MENU_CONTROL);
         LocalBroadcastManager.getInstance(this).registerReceiver(mOMReceiver, intentFilter);
-
         LocalBroadcastManager.getInstance(this).registerReceiver(mCallStatusReceiver, new IntentFilter(Constants.Broadcasts.BROADCAST_CALL_STATUS));
-
         registerReceiver(mSysConfigChangedReceiver, new IntentFilter(Intent.ACTION_CONFIGURATION_CHANGED));
-
-        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
     }
 
     @Override
@@ -152,13 +158,18 @@ public class OverlayService extends Service {
 
     private void initView() {
         mWindowManager = (WindowManager) getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
+        mFloatingButtonSize = getResources().getDimension(R.dimen.game_button_size);
+        mDeviceCutoutSize = getDisplayCutoutSize();
+        mWindowManager.getDefaultDisplay().getRealMetrics(mDisplayMetric);
         initGamingMenu();
         initFloatingLayout();
         initDanmaku();
+        restoreFloatingButtonOffset();
     }
 
     private void updateConfig() {
         ScreenUtil.init(this);
+        mWindowManager.getDefaultDisplay().getRealMetrics(mDisplayMetric);
 
         if (mQSView != null) {
             mQSView.setConfig(configBundle);
@@ -168,20 +179,7 @@ public class OverlayService extends Service {
             mQSAppView.setConfig(configBundle);
         }
 
-        // 悬浮球位置调整
-        if (mGamingFloatingLayout != null && mGamingFBLayoutParams != null) {
-            int defaultX = ((int) getResources().getDimension(R.dimen.game_button_size) - ScreenUtil.getScreenWidth()) / 2;
-            if (ScreenUtil.isPortrait()) {
-                mGamingFBLayoutParams.x = mPreferences.getInt(Constants.LocalConfigKeys.FLOATING_BUTTON_COORDINATE_VERTICAL_X, defaultX);
-                mGamingFBLayoutParams.y = mPreferences.getInt(Constants.LocalConfigKeys.FLOATING_BUTTON_COORDINATE_VERTICAL_Y, 10);
-            } else {
-                mGamingFBLayoutParams.x = mPreferences.getInt(Constants.LocalConfigKeys.FLOATING_BUTTON_COORDINATE_HORIZONTAL_X, defaultX);
-                mGamingFBLayoutParams.y = mPreferences.getInt(Constants.LocalConfigKeys.FLOATING_BUTTON_COORDINATE_HORIZONTAL_Y, 10);
-            }
-            if (mWindowManager != null) {
-                mWindowManager.updateViewLayout(mGamingFloatingLayout, mGamingFBLayoutParams);
-            }
-        }
+        restoreFloatingButtonOffset();
 
         // 弹幕设置
         mDanmakuManager.setMaxDanmakuSize(20); // 设置同屏最大弹幕数
@@ -209,6 +207,31 @@ public class OverlayService extends Service {
             final int menuOpacity = configBundle.getInt(Constants.ConfigKeys.MENU_OPACITY, Constants.ConfigDefaultValues.MENU_OPACITY);
             mGamingMenu.getBackground().setAlpha(menuOpacity * 255 / 100);
         }
+    }
+
+    private void restoreFloatingButtonOffset() {
+        // 悬浮球位置调整
+        if (mGamingFloatingLayout != null && mGamingFBLayoutParams != null) {
+            int defaultX = ((int) mFloatingButtonSize - mDisplayMetric.widthPixels) / 2;
+            if (isInPortrait()) {
+                setButtonOffset(CoordinateType.X, mGamingFBLayoutParams,
+                        mPreferences.getInt(Constants.LocalConfigKeys.FLOATING_BUTTON_COORDINATE_VERTICAL_X, defaultX));
+                setButtonOffset(CoordinateType.Y, mGamingFBLayoutParams,
+                        mPreferences.getInt(Constants.LocalConfigKeys.FLOATING_BUTTON_COORDINATE_VERTICAL_Y, 10));
+            } else {
+                setButtonOffset(CoordinateType.X, mGamingFBLayoutParams,
+                        mPreferences.getInt(Constants.LocalConfigKeys.FLOATING_BUTTON_COORDINATE_HORIZONTAL_X, defaultX));
+                setButtonOffset(CoordinateType.Y, mGamingFBLayoutParams,
+                        mPreferences.getInt(Constants.LocalConfigKeys.FLOATING_BUTTON_COORDINATE_HORIZONTAL_Y, 10));
+            }
+            if (mWindowManager != null) {
+                mWindowManager.updateViewLayout(mGamingFloatingLayout, mGamingFBLayoutParams);
+            }
+        }
+    }
+
+    private boolean isInPortrait() {
+        return mDisplayMetric.heightPixels > mDisplayMetric.widthPixels;
     }
 
     private WindowManager.LayoutParams getBaseLayoutParams() {
@@ -248,7 +271,7 @@ public class OverlayService extends Service {
             mWindowManager.addView(mGamingFloatingLayout, mGamingFBLayoutParams);
         }
 
-        if (mGamingFloatingButton == null) {
+        if (mGamingFloatingButton == null && mGamingFloatingLayout != null) {
             mGamingFloatingButton = mGamingFloatingLayout.findViewById(R.id.floating_button);
             mGamingFloatingButton.setOnClickListener(v -> showHideGamingMenu(0));
             mGamingFloatingButton.setOnTouchListener(new View.OnTouchListener() {
@@ -271,8 +294,8 @@ public class OverlayService extends Service {
                             break;
                         case MotionEvent.ACTION_MOVE:
                             hideFloatingButton(false);
-                            mGamingFBLayoutParams.x = origX + x - touchX;
-                            mGamingFBLayoutParams.y = origY + y - touchY;
+                            setButtonOffset(CoordinateType.X, mGamingFBLayoutParams, origX + x - touchX);
+                            setButtonOffset(CoordinateType.Y, mGamingFBLayoutParams, origY + y - touchY);
                             if (mWindowManager != null) {
                                 mWindowManager.updateViewLayout(mGamingFloatingLayout, mGamingFBLayoutParams);
                             }
@@ -304,9 +327,33 @@ public class OverlayService extends Service {
             hideFloatingButton(true, true);
         }
 
-        if (mCallControlButton == null) {
+        if (mCallControlButton == null && mGamingFloatingLayout != null) {
             mCallControlButton = mGamingFloatingLayout.findViewById(R.id.call_control_button);
             mCallControlButton.setOnClickListener(v -> callControl());
+        }
+        restoreFloatingButtonOffset();
+    }
+
+    private int getDisplayCutoutSize() {
+        if (mWindowManager == null)
+            return 0;
+
+        DisplayCutout cutout = mWindowManager.getDefaultDisplay().getCutout();
+        return cutout == null ? 0 : Math.min(cutout.getSafeInsets().width(),
+                cutout.getSafeInsets().height()) * -1;
+    }
+
+    private void setButtonOffset(CoordinateType type, WindowManager.LayoutParams param, int value) {
+        int rButton =  (int) mFloatingButtonSize / 2;
+        int rScreenX = (mDisplayMetric.widthPixels - rButton) / 2;
+        int rScreenY = (mDisplayMetric.heightPixels - rButton) / 2;
+
+        if (type == CoordinateType.X) {
+            param.x = MathUtils.clamp(value,
+                    isInPortrait() ? -rScreenX : -rScreenX-mDeviceCutoutSize, rScreenX);
+        } else {
+            param.y = MathUtils.clamp(value,
+                    isInPortrait() ? -rScreenY-mDeviceCutoutSize : -rScreenY, rScreenY);
         }
     }
 
