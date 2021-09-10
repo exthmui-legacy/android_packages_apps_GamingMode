@@ -86,7 +86,9 @@ public class GamingService extends Service {
     private TelecomManager mTelecomManager;
 
     private GamingPhoneStateListener mPhoneStateListener;
-    
+
+    private boolean mMenuOverlay;
+
     private BroadcastReceiver mGamingModeOffReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -185,8 +187,9 @@ public class GamingService extends Service {
             updateConfig();
         }
 
+        mMenuOverlay = getIntSetting(Constants.ConfigKeys.MENU_OVERLAY, Constants.ConfigDefaultValues.MENU_OVERLAY) == 1 ? true : false;
         mOverlayServiceIntent.putExtras(mCurrentConfig);
-        startServiceAsUser(mOverlayServiceIntent, UserHandle.CURRENT);
+        if (mMenuOverlay) startServiceAsUser(mOverlayServiceIntent, UserHandle.CURRENT);
         Settings.System.putInt(getContentResolver(), Settings.System.GAMING_MODE_ACTIVE, 1);
         if (mTelephonyManager != null) {
             mCallStatusIntent.putExtra("state", mTelephonyManager.getCallState());
@@ -255,6 +258,9 @@ public class GamingService extends Service {
 
         // menu opacity
         mCurrentConfig.putInt(Constants.ConfigKeys.MENU_OPACITY, getIntSetting(Constants.ConfigKeys.MENU_OPACITY, Constants.ConfigDefaultValues.MENU_OPACITY));
+
+        // menu opacity
+        mCurrentConfig.putInt(Constants.ConfigKeys.MENU_OVERLAY, getIntSetting(Constants.ConfigKeys.MENU_OVERLAY, Constants.ConfigDefaultValues.MENU_OVERLAY));
 
         Intent intent = new Intent(Constants.Broadcasts.BROADCAST_CONFIG_CHANGED);
         intent.putExtras(mCurrentConfig);
@@ -339,7 +345,7 @@ public class GamingService extends Service {
     public void onDestroy() {
         unregisterReceiver(mGamingModeOffReceiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mCallControlReceiver);
-        stopServiceAsUser(mOverlayServiceIntent, UserHandle.CURRENT);
+        if (mMenuOverlay) stopServiceAsUser(mOverlayServiceIntent, UserHandle.CURRENT);
         mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_NONE);
         setDisableGesture(false);
         setDisableHwKeys(false, true);

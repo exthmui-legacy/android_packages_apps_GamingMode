@@ -80,6 +80,8 @@ public class Constants {
         public static final String QUICK_START_APPS = Settings.System.GAMING_MODE_QS_APP_LIST;
 
         public static final String MENU_OPACITY = Settings.System.GAMING_MODE_MENU_OPACITY;
+
+        public static final String MENU_OVERLAY = Settings.System.GAMING_MODE_USE_OVERLAY_MENU;
     }
 
     public static class ConfigDefaultValues {
@@ -113,6 +115,9 @@ public class Constants {
 
         // Opacity of Gaming Menu (in percent)
         public static final int MENU_OPACITY = 75;
+
+        // Whetever to show menu overlay or not (1/0)
+        public static final int MENU_OVERLAY = 1;
     }
 
     public static class GamingActionTargets {
