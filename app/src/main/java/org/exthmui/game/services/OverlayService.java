@@ -204,6 +204,15 @@ public class OverlayService extends Service {
         // Danmaku Container visibility
         if (mDanmakuContainer != null) {
             final boolean showDanmaku = configBundle.getBoolean(Constants.ConfigKeys.SHOW_DANMAKU, Constants.ConfigDefaultValues.SHOW_DANMAKU);
+            WindowManager.LayoutParams danmakuParams = getBaseLayoutParams();
+            if (showDanmaku) {
+                danmakuParams.width = WindowManager.LayoutParams.MATCH_PARENT;
+                danmakuParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+            } else {
+                danmakuParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
+                danmakuParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+            }
+            mWindowManager.updateViewLayout(mDanmakuContainer, danmakuParams);
             mDanmakuContainer.setVisibility(showDanmaku ? View.VISIBLE : View.GONE);
         }
 
@@ -252,6 +261,8 @@ public class OverlayService extends Service {
             mGamingOverlayView = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.gaming_overlay_layout, null);
             mGamingOverlayView.setVisibility(View.GONE);
             WindowManager.LayoutParams mGamingViewLayoutParams = getBaseLayoutParams();
+            mGamingViewLayoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
+            mGamingViewLayoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
             mWindowManager.addView(mGamingOverlayView, mGamingViewLayoutParams);
 
             mGamingMenu = mGamingOverlayView.findViewById(R.id.gaming_menu);
@@ -379,6 +390,10 @@ public class OverlayService extends Service {
 
         if (mGamingOverlayView.getVisibility() == View.VISIBLE && mode != 1) {
             // hide
+            WindowManager.LayoutParams menuLayoutParams = getBaseLayoutParams();
+            menuLayoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
+            menuLayoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+            mWindowManager.updateViewLayout(mGamingOverlayView, menuLayoutParams);
             mGamingOverlayView.setVisibility(View.GONE);
             mGamingFloatingLayout.setVisibility(View.VISIBLE);
             hideFloatingButton(true);
@@ -396,6 +411,10 @@ public class OverlayService extends Service {
                 gravity |= Gravity.TOP;
             }
 
+            WindowManager.LayoutParams menuLayoutParams = getBaseLayoutParams();
+            menuLayoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
+            menuLayoutParams.height = WindowManager.LayoutParams.MATCH_PARENT;
+            mWindowManager.updateViewLayout(mGamingOverlayView, menuLayoutParams);
             mGamingFloatingLayout.setVisibility(View.GONE);
             mGamingOverlayView.setGravity(gravity);
             ViewGroup.LayoutParams gamingMenuLayoutParams =  mGamingMenu.getLayoutParams();
@@ -411,6 +430,9 @@ public class OverlayService extends Service {
         if (mWindowManager != null && mDanmakuContainer == null) {
             mDanmakuContainer = new FrameLayout(this);
             WindowManager.LayoutParams danmakuParams = getBaseLayoutParams();
+            danmakuParams.width = WindowManager.LayoutParams.MATCH_PARENT;
+            danmakuParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+            danmakuParams.gravity = Gravity.START | Gravity.TOP;
             danmakuParams.flags |= WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE;
             mWindowManager.addView(mDanmakuContainer, danmakuParams);
 
