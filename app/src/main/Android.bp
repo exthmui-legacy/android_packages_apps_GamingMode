@@ -18,7 +18,6 @@ android_app {
         "androidx-constraintlayout_constraintlayout",
         "com.google.android.material_material",
         "androidx.localbroadcastmanager_localbroadcastmanager",
-        "org.lineageos.platform.internal",
     ],
 
     platform_apis: true,

@@ -22,7 +22,6 @@
     <string name="qs_danmaku">通知弹幕</string>
     <string name="qs_dnd">勿扰模式</string>
     <string name="qs_lock_gesture">屏蔽手势</string>
-    <string name="qs_lock_hw_keys">屏蔽按键</string>
     <string name="qs_screen_capture">屏幕截图</string>
     <string name="qs_screen_record">录制屏幕</string>
     <string name="screenrecord_device_audio_label">"设备音频"</string>

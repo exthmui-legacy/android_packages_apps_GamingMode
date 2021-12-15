@@ -62,8 +62,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import lineageos.hardware.LineageHardwareManager;
-
 public class GamingService extends Service {
 
     private static final String TAG = "GamingService";
@@ -81,7 +79,6 @@ public class GamingService extends Service {
 
     private AudioManager mAudioManager;
     private IStatusBarService mStatusBarService;
-    private LineageHardwareManager mLineageHardware;
     private TelephonyManager mTelephonyManager;
     private TelecomManager mTelecomManager;
 
@@ -119,8 +116,6 @@ public class GamingService extends Service {
                 setDisableAutoBrightness(intent.getBooleanExtra("value", Constants.ConfigDefaultValues.DISABLE_AUTO_BRIGHTNESS), false);
             } else if (Constants.GamingActionTargets.DISABLE_GESTURE.equals(target)) {
                 setDisableGesture(intent.getBooleanExtra("value", Constants.ConfigDefaultValues.DISABLE_GESTURE));
-            } else if (Constants.GamingActionTargets.DISABLE_HW_KEYS.equals(target)) {
-                setDisableHwKeys(intent.getBooleanExtra("value", Constants.ConfigDefaultValues.DISABLE_HW_KEYS), false);
             } else if (Constants.GamingActionTargets.DISABLE_RINGTONE.equals(target)) {
                 setDisableRingtone(intent.getBooleanExtra("value", Constants.ConfigDefaultValues.DISABLE_RINGTONE));
             } else if (Constants.GamingActionTargets.SHOW_DANMAKU.equals(target)) {
@@ -150,11 +145,6 @@ public class GamingService extends Service {
         mTelephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
         mTelecomManager = (TelecomManager) getSystemService(TELECOM_SERVICE);
         mStatusBarService = IStatusBarService.Stub.asInterface(ServiceManager.getService(Context.STATUS_BAR_SERVICE));
-        try {
-            mLineageHardware = LineageHardwareManager.getInstance(this);
-        } catch (Error e) {
-            Log.e(TAG, "get LineageHardwareManager failed!", e);
-        }
 
         registerReceiver(mGamingModeOffReceiver, new IntentFilter(Constants.Broadcasts.SYS_BROADCAST_GAMING_MODE_OFF));
         LocalBroadcastManager.getInstance(this).registerReceiver(mCallControlReceiver, new IntentFilter(Constants.Broadcasts.BROADCAST_CALL_CONTROL));
@@ -167,7 +157,7 @@ public class GamingService extends Service {
 
         mOverlayServiceIntent = new Intent(this, OverlayService.class);
 
-        PendingIntent stopGamingIntent = PendingIntent.getBroadcast(this, 0, new Intent(Constants.Broadcasts.SYS_BROADCAST_GAMING_MODE_OFF), 0);
+        PendingIntent stopGamingIntent = PendingIntent.getBroadcast(this, 0, new Intent(Constants.Broadcasts.SYS_BROADCAST_GAMING_MODE_OFF), PendingIntent.FLAG_IMMUTABLE);
         Notification.Builder builder = new Notification.Builder(this, Constants.CHANNEL_GAMING_MODE_STATUS);
         Notification.Action.Builder actionBuilder = new Notification.Action.Builder(null, getString(R.string.action_stop_gaming_mode), stopGamingIntent);
         builder.addAction(actionBuilder.build());
@@ -240,10 +230,8 @@ public class GamingService extends Service {
             mCurrentConfig.putInt(Constants.ConfigKeys.PERFORMANCE_LEVEL, performanceLevel);
         }
 
-        // hw keys & gesture
-        boolean disableHwKeys = getBooleanSetting(Constants.ConfigKeys.DISABLE_HW_KEYS, Constants.ConfigDefaultValues.DISABLE_HW_KEYS);
+        // gesture
         boolean disableGesture = getBooleanSetting(Constants.ConfigKeys.DISABLE_GESTURE, Constants.ConfigDefaultValues.DISABLE_GESTURE);
-        setDisableHwKeys(disableHwKeys, false);
         setDisableGesture(disableGesture);
 
         // quick-start apps
@@ -265,22 +253,6 @@ public class GamingService extends Service {
         Intent intent = new Intent(Constants.Broadcasts.BROADCAST_CONFIG_CHANGED);
         intent.putExtras(mCurrentConfig);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-    }
-
-    private void setDisableHwKeys(boolean disable, boolean restore) {
-        if (mLineageHardware == null) return;
-        if (!mCurrentConfig.containsKey("old_disable_hw_keys")) {
-            boolean oldValue = mLineageHardware.get(LineageHardwareManager.FEATURE_KEY_DISABLE);
-            mCurrentConfig.putBoolean("old_disable_hw_keys", oldValue);
-        }
-        if (!restore) {
-            mCurrentConfig.putBoolean(Constants.ConfigKeys.DISABLE_HW_KEYS, disable);
-            mLineageHardware.set(LineageHardwareManager.FEATURE_KEY_DISABLE, disable);
-        } else {
-            boolean oldValue = mCurrentConfig.getBoolean("old_disable_hw_keys");
-            mCurrentConfig.putBoolean(Constants.ConfigKeys.DISABLE_HW_KEYS, oldValue);
-            mLineageHardware.set(LineageHardwareManager.FEATURE_KEY_DISABLE, oldValue);
-        }
     }
 
     private void setDisableGesture(boolean disable) {
@@ -348,7 +320,6 @@ public class GamingService extends Service {
         if (mMenuOverlay) stopServiceAsUser(mOverlayServiceIntent, UserHandle.CURRENT);
         mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_NONE);
         setDisableGesture(false);
-        setDisableHwKeys(false, true);
         setDisableAutoBrightness(false, true);
         setDisableRingtone(false);
         setPerformanceLevel(-1);

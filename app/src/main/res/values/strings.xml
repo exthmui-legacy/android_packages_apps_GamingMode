@@ -22,7 +22,6 @@
     <string name="qs_danmaku">Danmaku</string>
     <string name="qs_dnd">Do not disturb</string>
     <string name="qs_lock_gesture">Lock gesture</string>
-    <string name="qs_lock_hw_keys">Lock hardware keys</string>
     <string name="qs_screen_capture">Screen capture</string>
     <string name="qs_screen_record">Screen record</string>
     <string name="screenrecord_audio_label">Record audio</string>

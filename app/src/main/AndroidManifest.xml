@@ -22,10 +22,12 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".ui.ScreenRecordConfDialogActivity"
+            android:exported="true"
             android:theme="@style/dialog" />
 
         <receiver
             android:name=".receiver.GamingBroadcastReceiver"
+            android:exported="true"
             android:enabled="true">
             <intent-filter>
                 <action android:name="exthmui.intent.action.GAMING_MODE_ON" />
@@ -38,9 +40,11 @@
             android:exported="false" />
         <service
             android:name=".services.GamingService"
+            android:exported="true"
             android:enabled="true" />
         <service
             android:name=".services.DanmakuService"
+            android:exported="true"
             android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
             <intent-filter>
                 <action android:name="android.service.notification.NotificationListenerService" />

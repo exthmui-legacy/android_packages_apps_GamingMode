@@ -66,9 +66,6 @@ public class Constants {
         // 请勿打扰模式
         public static final String DISABLE_RINGTONE = Settings.System.GAMING_MODE_DISABLE_RINGTONE;
 
-        // 屏蔽按键
-        public static final String DISABLE_HW_KEYS = Settings.System.GAMING_MODE_DISABLE_HW_KEYS;
-
         // 屏蔽手势
         public static final String DISABLE_GESTURE = Settings.System.GAMING_MODE_DISABLE_GESTURE;
 
@@ -106,9 +103,6 @@ public class Constants {
         // 屏蔽手势
         public static final boolean DISABLE_GESTURE = true;
 
-        // 屏蔽按键
-        public static final boolean DISABLE_HW_KEYS = false;
-
         // 性能配置
         public static final boolean CHANGE_PERFORMANCE_LEVEL = true;
         public static final int PERFORMANCE_LEVEL = 5;
@@ -125,8 +119,6 @@ public class Constants {
         public static final String SHOW_DANMAKU = ConfigKeys.SHOW_DANMAKU;
         // 请勿打扰模式
         public static final String DISABLE_RINGTONE = ConfigKeys.DISABLE_RINGTONE;
-        // 屏蔽按键
-        public static final String DISABLE_HW_KEYS = ConfigKeys.DISABLE_HW_KEYS;
         // 屏蔽手势
         public static final String DISABLE_GESTURE = ConfigKeys.DISABLE_GESTURE;
         // 自动亮度
